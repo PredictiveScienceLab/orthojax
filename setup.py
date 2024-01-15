@@ -6,8 +6,8 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='orthojax',
-    version='0.1.1',    
-    description='Orthogonal polynomials in Jax',
+    version='0.1.2',    
+    description='Orthogonal polynomials in Jxax',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/PredictiveScienceLab/orthojax',

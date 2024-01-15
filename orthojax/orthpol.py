@@ -4,7 +4,9 @@ ChatGPT to translate the Fortran code to Python.
 """
 
 __all__ = [
-    "make_quadrature", "make_orthogonal_polynomial", "make_legendre_polynomial", "QuadratureRule",
+    "make_quadrature", "make_orthogonal_polynomial", "make_legendre_polynomial", 
+    "make_hermite_polynomial",
+    "QuadratureRule",
     "OrthogonalPolynomial", "lancz", "fejer", "symtr", "tr"
 ]
 
