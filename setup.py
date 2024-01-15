@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='orthojax',
-    version='0.1.0',    
+    version='0.1.1',    
     description='Orthogonal polynomials in Jax',
     long_description=long_description,
     long_description_content_type='text/markdown',
