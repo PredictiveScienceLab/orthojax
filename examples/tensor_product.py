@@ -1,7 +1,6 @@
 """Tests the tensor product of two functions."""
 import numpy as np
 
-import jax
 import jax.numpy as jnp
 
 import orthojax as ojax
