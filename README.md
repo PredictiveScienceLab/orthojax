@@ -15,3 +15,4 @@ This is a package for orthogonal bases in Jax. Currently, it supports:
 ## Todo
 
 - Add Fourier basis.
+- Add documentation of API.

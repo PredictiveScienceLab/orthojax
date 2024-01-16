@@ -4,7 +4,7 @@ orthjax.
 Orthogonal polynomials in jax.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __author__ = 'Ilias Bilionis'
 __credits__ = 'Purdue University, School of Mechanical Engineering'
 
