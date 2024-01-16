@@ -119,14 +119,18 @@ class OrthogonalPolynomial(eqx.Module):
         return self.alpha.shape[0]
 
     def __init__(self, alpha, beta, gamma, quad):
-        self.alpha = alpha
-        self.beta = beta
-        self.gamma = gamma
+        self.alpha = jnp.array(alpha)
+        self.beta = jnp.array(beta)
+        self.gamma = jnp.array(gamma)
         self.quad = quad
 
     @eqx.filter_jit
     @partial(vmap, in_axes=(None, 0))
     def __call__(self, xi):
+        return self.eval(xi)
+    
+    @eqx.filter_jit
+    def eval(self, xi):
         init = (xi, 1.0 / self.gamma[0], (xi - self.alpha[0]) / self.gamma[1])
         xs = jnp.hstack(
             [self.alpha[1:-1, None], self.beta[1:-1, None], self.gamma[2:, None]]
