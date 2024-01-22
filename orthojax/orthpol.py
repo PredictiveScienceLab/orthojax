@@ -111,6 +111,10 @@ class OrthogonalPolynomial(eqx.Module):
     quad: QuadratureRule
 
     @property
+    def num_basis(self):
+        return self.alpha.shape[0]
+
+    @property
     def degree(self):
         return self.alpha.shape[0] - 1
     
