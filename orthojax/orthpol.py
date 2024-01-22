@@ -52,14 +52,14 @@ def fejer(n):
 
     Caution: This was translated from Fortran by ChatGPT.
     """
-    dpi = 4.0 * np.arctan(1.0)
+    pi = np.pi
     nh = n // 2
     np1h = (n + 1) // 2
     dn = float(n)
     
     # Calculate x using cosine function and symmetry properties
     k = np.arange(1, nh + 1)
-    x_nh = np.cos(0.5 * (2 * k - 1) * dpi / dn)
+    x_nh = np.cos(0.5 * (2 * k - 1) * pi / dn)
     x = np.concatenate((-x_nh[::-1], [0] * (n % 2), x_nh))
     
     # Initialize weights
@@ -72,12 +72,11 @@ def fejer(n):
         dt = 2.0 * dc0
         dsum = dc0 / 3.0
         
-        m = np.arange(2, nh + 1)
-        dc2 = dc1
-        dc1 = dc0
-        dc0 = dt * dc1 - dc2
-        dsum += np.sum(dc0 / (4 * m**2 - 1))
-        
+        for m in range(2, nh + 1):
+            dc2 = dc1
+            dc1 = dc0
+            dc0 = dt * dc1 - dc2
+            dsum += dc0 / (4 * m**2 - 1)        
         w[k - 1] = 2.0 * (1.0 - 2.0 * dsum) / dn
         if k != np1h or n % 2 == 0:  # avoid double counting the center for odd n
             w[n - k] = w[k - 1]
@@ -135,30 +134,26 @@ class OrthogonalPolynomial(eqx.Module):
     
     @eqx.filter_jit
     def eval(self, xi):
-        init = (xi, 1.0 / self.gamma[0], (xi - self.alpha[0]) / self.gamma[1])
-        xs = jnp.hstack(
-            [self.alpha[1:-1, None], self.beta[1:-1, None], self.gamma[2:, None]]
-        )
-        def f(carry, x):
-            xi, phi_prev, phi = carry
-            alpha, beta, gamma = x
-            phi_next = ((xi - alpha) * phi - beta * phi_prev) / gamma
-            return (xi, phi, phi_next), phi_next
-        _, phi = lax.scan(f, init, xs)
-        return jnp.hstack([[init[1], init[2]], phi])
+        p = self.alpha.shape[0]
+        phi0 = 1. / self.gamma[0]
+        phis = [phi0]
+        if p >= 1:
+            phi1 = (xi - self.alpha[0]) * (phi0 / self.gamma[1])
+            phis.append(phi1)
+        for i in range(2, p):
+            phis.append(((xi - self.alpha[i - 1]) * phis[i - 1] - self.beta[i - 1] * phis[i - 2]) / self.gamma[i])
+        return jnp.array(phis).T
     
     def normalize(self):
         beta = np.copy(self.beta)
-        p = beta.shape[0]
         gamma = np.copy(self.gamma)
+        p = beta.shape[0]
         beta[0] = np.sqrt(beta[0])
         gamma[0] = beta[0]
         for i in range(p):
             beta[i] = np.sqrt(beta[i] * gamma[i])
             gamma[i] = beta[i]
-
         return OrthogonalPolynomial(self.alpha, beta, gamma, self.quad)
-
 
 def lancz(n, quadrature_rule):
     """Implements the Lanczos algorithm for computing the coefficients of the
